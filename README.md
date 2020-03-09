@@ -13,3 +13,9 @@
 - `php bin/console cache:clear` - czyszczenie cache
 - `php bin/console cache:pool:clear cache.app` - czyszczenie cache dla cache.app pool
 - `php bin/console code:generator:usecase MyUseCase` - generowanie nowego use case w strukturze Domain/Infrastructure
+
+
+## TODO:
+- REST API,
+- unit tests
+- codeception tests
