@@ -5,6 +5,7 @@
 - Symfony 5
 
 ### Symfony commands:
+- `php bin/console user:create EMAIL NICK PASSWORD` - create new user
 - `php bin/console doctrine:schema:update --force` - aktualizacja bazy
 - `php bin/console doctrine:fixtures:load` - wczytanie danych do bazy (nadpisuje wszystkie dane)
 - `php bin/console doctrine:fixtures:load --append` - wczytanie danych do bazy (dodaje do istniejacych)
