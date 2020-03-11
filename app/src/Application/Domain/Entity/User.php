@@ -26,13 +26,6 @@ class User implements UserInterface
      *
      * @ORM\Column(type="string")
      */
-    private $name;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(type="string")
-     */
     private $nick;
 
     /**
@@ -40,7 +33,6 @@ class User implements UserInterface
      * @ORM\Column(type="integer")
      */
     private $status = 1;
-
 
     /**
      * @var string
@@ -63,27 +55,26 @@ class User implements UserInterface
     private $password;
 
     /**
+     * @var \DateTime
+     * @ORM\Column(type="datetime", options={"default" = "CURRENT_TIMESTAMP"})
+     */
+    private $createdAt;
+
+    /**
+     * User constructor.
+     * @throws \Exception
+     */
+    public function __construct()
+    {
+        $this->createdAt = new \DateTime();
+    }
+
+    /**
      * @return int
      */
     public function getId(): int
     {
         return $this->id;
-    }
-
-    /**
-     * @return string
-     */
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    /**
-     * @param string $name
-     */
-    public function setName(string $name): void
-    {
-        $this->name = $name;
     }
 
     /**
@@ -160,7 +151,7 @@ class User implements UserInterface
 
     public function getUsername()
     {
-        return  $this->email;
+        return $this->email;
     }
 
     /**
@@ -197,4 +188,14 @@ class User implements UserInterface
     {
         $this->password = $password;
     }
+
+    /**
+     * @return \DateTime
+     */
+    public function getCreatedAt(): \DateTime
+    {
+        return $this->createdAt;
+    }
+
+
 }
