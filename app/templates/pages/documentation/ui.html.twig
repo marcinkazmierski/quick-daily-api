@@ -1,0 +1,63 @@
+{% extends 'layout.html.twig' %}
+{% block content_header %}{% endblock %}
+{% block content %}
+
+    <div class="row">
+        <div class="col-sm">
+            <div id="swagger-ui"></div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('docs/swagger-ui.css') }}" type="text/css"/>
+    <style>
+        .topbar {
+            display: none;
+        }
+
+        .swagger-ui .response-col_status {
+            width: 10%;
+        }
+
+        .swagger-ui .response-col_description {
+            width: 70%;
+        }
+
+        .swagger-ui .response-col_links {
+            width: 10%;
+        }
+
+        .swagger-ui .parameters-col_description {
+            min-width: 200px;
+        }
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('docs/swagger-ui-bundle.js') }}"></script>
+    <script src="{{ asset('docs/swagger-ui-standalone-preset.js') }}"></script>
+    <script>
+        window.onload = function () {
+            // Build a system
+            const ui = SwaggerUIBundle({
+                url: "{{ path('documentation_api_yaml') }}",
+                dom_id: '#swagger-ui',
+                deepLinking: true,
+                presets: [
+                    SwaggerUIBundle.presets.apis,
+                    SwaggerUIStandalonePreset
+                ],
+                plugins: [
+                    SwaggerUIBundle.plugins.DownloadUrl
+                ],
+                layout: "StandaloneLayout"
+            });
+
+            window.ui = ui
+        }
+    </script>
+{% endblock %}
+
