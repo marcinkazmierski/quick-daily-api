@@ -14,4 +14,11 @@ interface UserRepositoryInterface
      * @throws RepositoryException
      */
     public function save(User $entity): void;
+
+    /**
+     * @param User $user
+     * @param string $password
+     * @return string
+     */
+    public function encodePassword(User $user, string $password): string;
 }

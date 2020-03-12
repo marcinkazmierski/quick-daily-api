@@ -11,13 +11,24 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\ORMException;
 use Symfony\Bridge\Doctrine\Security\User\UserLoaderInterface;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class UserRepository extends ServiceEntityRepository implements UserLoaderInterface, UserRepositoryInterface
 {
-    public function __construct(ManagerRegistry $registry)
+
+    /** @var UserPasswordEncoderInterface */
+    private $passwordEncoder;
+
+    /**
+     * UserRepository constructor.
+     * @param ManagerRegistry $registry
+     * @param UserPasswordEncoderInterface $passwordEncoder
+     */
+    public function __construct(ManagerRegistry $registry, UserPasswordEncoderInterface $passwordEncoder)
     {
         parent::__construct($registry, User::class);
+        $this->passwordEncoder = $passwordEncoder;
     }
 
     /**
@@ -49,5 +60,15 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             $this->_em->rollback();
             throw new RepositoryException($e->getMessage());
         }
+    }
+
+    /**
+     * @param User $user
+     * @param string $password
+     * @return string
+     */
+    public function encodePassword(User $user, string $password): string
+    {
+        return $this->passwordEncoder->encodePassword($user, $password);
     }
 }

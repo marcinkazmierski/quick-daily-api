@@ -5,6 +5,9 @@ namespace App\Command;
 
 use App\Application\Domain\Entity\User;
 use App\Application\Domain\Repository\UserRepositoryInterface;
+use App\Application\Domain\UseCase\CreateNewUser\CreateNewUser;
+use App\Application\Domain\UseCase\CreateNewUser\CreateNewUserPresenterInterface;
+use App\Application\Domain\UseCase\CreateNewUser\CreateNewUserRequest;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -29,21 +32,21 @@ class CreateNewUserCommand extends Command
     /** @var SymfonyStyle */
     protected $io;
 
-    /** @var UserPasswordEncoderInterface */
-    private $passwordEncoder;
+    /** @var CreateNewUser */
+    protected $useCase;
 
-    /** @var UserRepositoryInterface */
-    private $userRepository;
+    /** @var CreateNewUserPresenterInterface */
+    protected $presenter;
 
     /**
      * CreateNewUserCommand constructor.
-     * @param UserPasswordEncoderInterface $passwordEncoder
-     * @param UserRepositoryInterface $userRepository
+     * @param CreateNewUser $useCase
+     * @param CreateNewUserPresenterInterface $presenter
      */
-    public function __construct(UserPasswordEncoderInterface $passwordEncoder, UserRepositoryInterface $userRepository)
+    public function __construct(CreateNewUser $useCase, CreateNewUserPresenterInterface $presenter)
     {
-        $this->passwordEncoder = $passwordEncoder;
-        $this->userRepository = $userRepository;
+        $this->useCase = $useCase;
+        $this->presenter = $presenter;
         parent::__construct();
     }
 
@@ -86,27 +89,23 @@ class CreateNewUserCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        try {
-            //todo: validation
-            $nick = (string)$input->getArgument(self::PARAM_NICK);
-            $email = (string)$input->getArgument(self::PARAM_EMAIL);
-            $password = (string)$input->getArgument(self::PARAM_PASSWORD);
 
-            $user = new User();
-            $encodedPassword = $this->passwordEncoder->encodePassword($user, $password);
-            $user->setPassword($encodedPassword);
-            $user->setEmail($email);
-            $user->setNick($nick);
-            $this->userRepository->save($user);
-            $this->io->success(
-                sprintf('New account created! ID: "%d"', $user->getId())
-            );
+        $nick = (string)$input->getArgument(self::PARAM_NICK);
+        $email = (string)$input->getArgument(self::PARAM_EMAIL);
+        $password = (string)$input->getArgument(self::PARAM_PASSWORD);
+
+        $request = new CreateNewUserRequest($email, $password, $nick);
+        $this->useCase->execute($request, $this->presenter);
+
+        $result = $this->presenter->view();
+
+        if ($result['status'] === 'success') {
+            $this->io->success($result['message']);
             return 0;
-        } catch (\Throwable $exception) {
-            $this->io->error(
-                sprintf('Exception "%s"', $exception->getMessage())
-            );
-            return 1;
         }
+
+        $this->io->error($result['message']);
+        return 1;
+
     }
 }

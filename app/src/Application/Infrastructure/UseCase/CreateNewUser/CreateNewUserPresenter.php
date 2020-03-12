@@ -1,12 +1,11 @@
 <?php
 declare(strict_types=1);
+
 namespace App\Application\Infrastructure\UseCase\CreateNewUser;
 
-use App\Application\Domain\Common\Mapper\ErrorCodeMapper;
 use App\Application\Domain\UseCase\CreateNewUser\CreateNewUserPresenterInterface;
 use App\Application\Domain\UseCase\CreateNewUser\CreateNewUserResponse;
 use App\Application\Infrastructure\Common\AbstractPresenter;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * Class CreateNewUserPresenter
@@ -28,21 +27,20 @@ class CreateNewUserPresenter extends AbstractPresenter implements CreateNewUserP
     }
 
     /**
-     * @return JsonResponse
+     * @return array
      */
     public function view()
     {
         if ($this->response->hasError()) {
-            switch ($this->response->getError()->getCode()) {
-                case ErrorCodeMapper::ERROR_GENERAL:
-                    $statusCode = JsonResponse::HTTP_INTERNAL_SERVER_ERROR;
-                    break;
-                default:
-                    $statusCode = JsonResponse::HTTP_BAD_REQUEST;
-            }
-            return $this->viewErrorResponse($this->response->getError(), $statusCode);
+            return [
+                'status' => 'error',
+                'message' => $this->response->getError()->getMessage(),
+            ];
         }
-        
-        return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
+
+        return [
+            'status' => 'success',
+            'message' => sprintf('New account created! ID: "%d"', $this->response->getUser()->getId()),
+        ];
     }
 }

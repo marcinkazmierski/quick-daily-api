@@ -4,7 +4,9 @@ declare(strict_types=1);
 namespace App\Application\Infrastructure\Common\Factory\ErrorResponseFactory;
 
 use App\Application\Domain\Common\Factory\ErrorResponseFactory\ErrorResponseFromExceptionFactoryInterface;
+use App\Application\Domain\Common\Mapper\ErrorCodeMapper;
 use App\Application\Domain\Common\Response\ErrorResponse;
+use App\Application\Domain\Exception\ValidateException;
 use Psr\Log\LoggerInterface;
 
 class ErrorResponseFromExceptionFactory implements ErrorResponseFromExceptionFactoryInterface
@@ -36,7 +38,17 @@ class ErrorResponseFromExceptionFactory implements ErrorResponseFromExceptionFac
         ]);
 
         $message = $exception->getMessage();
-        $errorCode = '1001'; // TODO, const
-        return new ErrorResponse($errorCode, $message, $message);
+
+        switch (get_class($exception)) {
+            case ValidateException::class:
+                $userMessage = 'Invalid request';
+                $errorCode = ErrorCodeMapper::ERROR_INVALID_REQUEST;
+                break;
+            default:
+                $userMessage = 'General error';
+                $errorCode = ErrorCodeMapper::ERROR_GENERAL;
+        }
+
+        return new ErrorResponse($errorCode, $message, $userMessage);
     }
 }
