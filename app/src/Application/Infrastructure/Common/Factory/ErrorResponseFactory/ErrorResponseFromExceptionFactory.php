@@ -6,6 +6,8 @@ namespace App\Application\Infrastructure\Common\Factory\ErrorResponseFactory;
 use App\Application\Domain\Common\Factory\ErrorResponseFactory\ErrorResponseFromExceptionFactoryInterface;
 use App\Application\Domain\Common\Mapper\ErrorCodeMapper;
 use App\Application\Domain\Common\Response\ErrorResponse;
+use App\Application\Domain\Exception\InvalidCredentialsException;
+use App\Application\Domain\Exception\InvalidUserStatusException;
 use App\Application\Domain\Exception\ValidateException;
 use Psr\Log\LoggerInterface;
 
@@ -43,6 +45,14 @@ class ErrorResponseFromExceptionFactory implements ErrorResponseFromExceptionFac
             case ValidateException::class:
                 $userMessage = 'Invalid request';
                 $errorCode = ErrorCodeMapper::ERROR_INVALID_REQUEST;
+                break;
+            case InvalidCredentialsException::class:
+                $userMessage = 'Invalid user credentials';
+                $errorCode = ErrorCodeMapper::ERROR_INVALID_REQUEST;
+                break;
+            case InvalidUserStatusException::class:
+                $userMessage = 'Invalid user status';
+                $errorCode = ErrorCodeMapper::ERROR_INVALID_USER_STATUS;
                 break;
             default:
                 $userMessage = 'General error';

@@ -76,6 +76,27 @@ class DocumentationController extends AbstractController
  *    example=123,
  * ),
  *
+ * @OA\Schema(
+ *     schema="email",
+ *     description="User email",
+ *     type="string",
+ *     example="test@test.pl",
+ * ),
+ *
+ * @OA\Schema(
+ *     schema="password",
+ *     description="User account password",
+ *     type="string",
+ *     example="SecretPassword",
+ * ),
+ *
+ * @OA\Schema(
+ *     schema="token",
+ *     description="User auth access token",
+ *     type="string",
+ *     example="1a4ee6defb35d3ec89fef66321284ae4137ba0c48c5c63de90ea7956e13cd975a51cceae0b2a1111e7e561a5ed0e",
+ * ),
+ *
  * @OA\Components(
  *     @OA\Response(
  *         response="generalError",

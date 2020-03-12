@@ -71,4 +71,24 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
     {
         return $this->passwordEncoder->encodePassword($user, $password);
     }
+
+    /**
+     * @param string $email
+     * @param string $password
+     * @return User
+     * @throws EntityNotFoundException
+     */
+    public function getUserByEmailAndPassword(string $email, string $password): User
+    {
+        /** @var User $user */
+        $user = $this->findOneBy(['email' => $email]);
+        if (!$user) {
+            throw new EntityNotFoundException("Invalid email");
+        }
+
+        if (!$this->passwordEncoder->isPasswordValid($user, $password)) {
+            throw new EntityNotFoundException("Invalid password");
+        }
+        return $user;
+    }
 }

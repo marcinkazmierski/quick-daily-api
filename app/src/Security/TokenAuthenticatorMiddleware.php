@@ -3,8 +3,11 @@ declare(strict_types=1);
 
 namespace App\Security;
 
-use App\Application\Domain\Entity\User;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Application\Domain\Common\Factory\ErrorResponseFactory\ErrorResponseFromExceptionFactoryInterface;
+use App\Application\Domain\Common\Mapper\ErrorResponseFieldMapper;
+use App\Application\Domain\Common\Mapper\RequestFieldMapper;
+use App\Application\Domain\Exception\EntityNotFoundException;
+use App\Application\Domain\Repository\UserTokenRepositoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,12 +20,28 @@ use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 
 class TokenAuthenticatorMiddleware extends AbstractGuardAuthenticator
 {
-    private $em;
+    const AUTHENTICATION_WHITELIST = [
+        '#/api/v1/auth/authenticate#',
+    ];
 
-    public function __construct(EntityManagerInterface $em)
+
+    /** @var ErrorResponseFromExceptionFactoryInterface */
+    private $errorResponseFromExceptionFactory;
+
+    /** @var UserTokenRepositoryInterface */
+    private $userTokenRepository;
+
+    /**
+     * TokenAuthenticatorMiddleware constructor.
+     * @param ErrorResponseFromExceptionFactoryInterface $errorResponseFromExceptionFactory
+     * @param UserTokenRepositoryInterface $userTokenRepository
+     */
+    public function __construct(ErrorResponseFromExceptionFactoryInterface $errorResponseFromExceptionFactory, UserTokenRepositoryInterface $userTokenRepository)
     {
-        $this->em = $em;
+        $this->errorResponseFromExceptionFactory = $errorResponseFromExceptionFactory;
+        $this->userTokenRepository = $userTokenRepository;
     }
+
 
     /**
      * Called on every request to decide if this authenticator should be
@@ -31,7 +50,12 @@ class TokenAuthenticatorMiddleware extends AbstractGuardAuthenticator
      */
     public function supports(Request $request)
     {
-        return $request->headers->has('X-AUTH-TOKEN');
+        foreach (self::AUTHENTICATION_WHITELIST as $item) {
+            if (preg_match_all($item, $request->getRequestUri(), $result)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -40,9 +64,14 @@ class TokenAuthenticatorMiddleware extends AbstractGuardAuthenticator
      */
     public function getCredentials(Request $request)
     {
-        return $request->headers->get('X-AUTH-TOKEN');
+        return $request->headers->get(RequestFieldMapper::AUTH_TOKEN);
     }
 
+    /**
+     * @param mixed $credentials
+     * @param UserProviderInterface $userProvider
+     * @return object|UserInterface|null
+     */
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
         if (null === $credentials) {
@@ -50,9 +79,16 @@ class TokenAuthenticatorMiddleware extends AbstractGuardAuthenticator
             return null;
         }
 
-        // if a User is returned, checkCredentials() is called
-        return $this->em->getRepository(User::class)
-            ->findOneBy(['apiToken' => $credentials]);
+        try {
+            $userToken = $this->userTokenRepository->getTokenByTokenKey($credentials);
+            if ($userToken->getUser()->getStatus() === 1) {
+                return $userToken->getUser();
+            } else {
+                //todo: throw error: invalid status
+            }
+        } catch (EntityNotFoundException $exception) {
+        }
+        return null;
     }
 
     public function checkCredentials($credentials, UserInterface $user)
@@ -72,15 +108,9 @@ class TokenAuthenticatorMiddleware extends AbstractGuardAuthenticator
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
-        $data = [
-            // you may ant to customize or obfuscate the message first
-            'message' => strtr($exception->getMessageKey(), $exception->getMessageData())
+        $error = $this->errorResponseFromExceptionFactory->create($exception);
 
-            // or to translate this message
-            // $this->translator->trans($exception->getMessageKey(), $exception->getMessageData())
-        ];
-
-        return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
+        return new JsonResponse([ErrorResponseFieldMapper::ERROR_FIELD => $error->toArray()], Response::HTTP_FORBIDDEN);
     }
 
     /**

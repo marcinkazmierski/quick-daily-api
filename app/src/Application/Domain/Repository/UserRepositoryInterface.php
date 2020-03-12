@@ -5,6 +5,7 @@ namespace App\Application\Domain\Repository;
 
 
 use App\Application\Domain\Entity\User;
+use App\Application\Domain\Exception\EntityNotFoundException;
 use App\Application\Domain\Exception\RepositoryException;
 
 interface UserRepositoryInterface
@@ -21,4 +22,12 @@ interface UserRepositoryInterface
      * @return string
      */
     public function encodePassword(User $user, string $password): string;
+
+    /**
+     * @param string $email
+     * @param string $password
+     * @return User
+     * @throws EntityNotFoundException
+     */
+    public function getUserByEmailAndPassword(string $email, string $password): User;
 }
