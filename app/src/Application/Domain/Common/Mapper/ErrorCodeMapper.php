@@ -9,4 +9,5 @@ abstract class ErrorCodeMapper
     const ERROR_INVALID_REQUEST = '1002';
     const ERROR_INVALID_USER_CREDENTIALS = '1003';
     const ERROR_INVALID_USER_STATUS = '1004';
+    const ERROR_INVALID_USER_TOKEN = '1004';
 }

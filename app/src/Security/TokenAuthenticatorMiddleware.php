@@ -4,8 +4,10 @@ declare(strict_types=1);
 namespace App\Security;
 
 use App\Application\Domain\Common\Factory\ErrorResponseFactory\ErrorResponseFromExceptionFactoryInterface;
+use App\Application\Domain\Common\Mapper\ErrorCodeMapper;
 use App\Application\Domain\Common\Mapper\ErrorResponseFieldMapper;
 use App\Application\Domain\Common\Mapper\RequestFieldMapper;
+use App\Application\Domain\Common\Response\ErrorResponse;
 use App\Application\Domain\Exception\EntityNotFoundException;
 use App\Application\Domain\Repository\UserTokenRepositoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -24,7 +26,6 @@ class TokenAuthenticatorMiddleware extends AbstractGuardAuthenticator
         '#/api/v1/auth/authenticate#',
     ];
 
-
     /** @var ErrorResponseFromExceptionFactoryInterface */
     private $errorResponseFromExceptionFactory;
 
@@ -42,11 +43,13 @@ class TokenAuthenticatorMiddleware extends AbstractGuardAuthenticator
         $this->userTokenRepository = $userTokenRepository;
     }
 
-
     /**
      * Called on every request to decide if this authenticator should be
      * used for the request. Returning false will cause this authenticator
      * to be skipped.
+     *
+     * @param Request $request
+     * @return bool
      */
     public function supports(Request $request)
     {
@@ -61,10 +64,13 @@ class TokenAuthenticatorMiddleware extends AbstractGuardAuthenticator
     /**
      * Called on every request. Return whatever credentials you want to
      * be passed to getUser() as $credentials.
+     *
+     * @param Request $request
+     * @return mixed|string|null
      */
     public function getCredentials(Request $request)
     {
-        return $request->headers->get(RequestFieldMapper::AUTH_TOKEN);
+        return $request->headers->get(RequestFieldMapper::AUTH_TOKEN, '');
     }
 
     /**
@@ -74,7 +80,7 @@ class TokenAuthenticatorMiddleware extends AbstractGuardAuthenticator
      */
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
-        if (null === $credentials) {
+        if (empty($credentials)) {
             // The token header was empty, authentication fails with 401
             return null;
         }
@@ -83,14 +89,17 @@ class TokenAuthenticatorMiddleware extends AbstractGuardAuthenticator
             $userToken = $this->userTokenRepository->getTokenByTokenKey($credentials);
             if ($userToken->getUser()->getStatus() === 1) {
                 return $userToken->getUser();
-            } else {
-                //todo: throw error: invalid status
             }
         } catch (EntityNotFoundException $exception) {
         }
         return null;
     }
 
+    /**
+     * @param mixed $credentials
+     * @param UserInterface $user
+     * @return bool
+     */
     public function checkCredentials($credentials, UserInterface $user)
     {
         // check credentials - e.g. make sure the password is valid
@@ -100,21 +109,35 @@ class TokenAuthenticatorMiddleware extends AbstractGuardAuthenticator
         return true;
     }
 
+    /**
+     * @param Request $request
+     * @param TokenInterface $token
+     * @param string $providerKey
+     * @return Response|null
+     */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
         // on success, let the request continue
         return null;
     }
 
+    /**
+     * @param Request $request
+     * @param AuthenticationException $exception
+     * @return JsonResponse|Response|null
+     */
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
-        $error = $this->errorResponseFromExceptionFactory->create($exception);
-
+        $error = new ErrorResponse(ErrorCodeMapper::ERROR_INVALID_USER_TOKEN, "Access Denied!", "Invalid user X-AUTH-TOKEN");
         return new JsonResponse([ErrorResponseFieldMapper::ERROR_FIELD => $error->toArray()], Response::HTTP_FORBIDDEN);
     }
 
     /**
      * Called when authentication is needed, but it's not sent
+     *
+     * @param Request $request
+     * @param AuthenticationException|null $authException
+     * @return JsonResponse|Response
      */
     public function start(Request $request, AuthenticationException $authException = null)
     {
@@ -126,6 +149,9 @@ class TokenAuthenticatorMiddleware extends AbstractGuardAuthenticator
         return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
     }
 
+    /**
+     * @return bool
+     */
     public function supportsRememberMe()
     {
         return false;
