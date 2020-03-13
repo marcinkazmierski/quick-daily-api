@@ -41,4 +41,62 @@ class Company
      * @ORM\OneToMany(targetEntity="Team", mappedBy="company", cascade={"ALL"})
      */
     private $teams;
+
+    /**
+     * @return int
+     */
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName(string $name): void
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getExternalAppId(): string
+    {
+        return $this->externalAppId;
+    }
+
+    /**
+     * @param string $externalAppId
+     */
+    public function setExternalAppId(string $externalAppId): void
+    {
+        $this->externalAppId = $externalAppId;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getTeams(): Collection
+    {
+        return $this->teams;
+    }
+
+    /**
+     * @param Collection $teams
+     */
+    public function setTeams(Collection $teams): void
+    {
+        $this->teams = $teams;
+    }
+
+
 }

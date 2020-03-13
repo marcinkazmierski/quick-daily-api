@@ -1,8 +1,12 @@
 <?php
 declare(strict_types=1);
+
 namespace App\Application\Infrastructure\UseCase\GetTeams;
 
+use App\Application\Domain\Common\Factory\EntityResponseFactory\TeamResponseFactoryInterface;
 use App\Application\Domain\Common\Mapper\ErrorCodeMapper;
+use App\Application\Domain\Common\Mapper\ResponseFieldMapper;
+use App\Application\Domain\Entity\Team;
 use App\Application\Domain\UseCase\GetTeams\GetTeamsPresenterInterface;
 use App\Application\Domain\UseCase\GetTeams\GetTeamsResponse;
 use App\Application\Infrastructure\Common\AbstractPresenter;
@@ -14,10 +18,21 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  */
 class GetTeamsPresenter extends AbstractPresenter implements GetTeamsPresenterInterface
 {
+    /** @var TeamResponseFactoryInterface */
+    private $teamResponseFactory;
     /**
      * @var GetTeamsResponse $response
      */
     private $response;
+
+    /**
+     * GetTeamsPresenter constructor.
+     * @param TeamResponseFactoryInterface $teamResponseFactory
+     */
+    public function __construct(TeamResponseFactoryInterface $teamResponseFactory)
+    {
+        $this->teamResponseFactory = $teamResponseFactory;
+    }
 
     /**
      * @param GetTeamsResponse $response
@@ -42,7 +57,13 @@ class GetTeamsPresenter extends AbstractPresenter implements GetTeamsPresenterIn
             }
             return $this->viewErrorResponse($this->response->getError(), $statusCode);
         }
-        
-        return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
+
+        $teams = [];
+        /** @var Team $team */
+        foreach ($this->response->getTeams() as $team) {
+            $teams[] = $this->teamResponseFactory->create($team);
+        }
+
+        return new JsonResponse([ResponseFieldMapper::TEAM_SECTION => $teams], JsonResponse::HTTP_OK);
     }
 }
