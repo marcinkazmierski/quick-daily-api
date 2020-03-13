@@ -48,7 +48,7 @@ class ErrorResponseFromExceptionFactory implements ErrorResponseFromExceptionFac
                 break;
             case InvalidCredentialsException::class:
                 $userMessage = 'Invalid user credentials';
-                $errorCode = ErrorCodeMapper::ERROR_INVALID_REQUEST;
+                $errorCode = ErrorCodeMapper::ERROR_INVALID_USER_CREDENTIALS;
                 break;
             case InvalidUserStatusException::class:
                 $userMessage = 'Invalid user status';

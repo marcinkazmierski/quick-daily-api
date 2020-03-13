@@ -1,0 +1,14 @@
+actor: ApiTester
+modules:
+    enabled:
+        - REST:
+              url: http://localhost
+              depends: PhpBrowser
+              part: Json
+        - \App\Tests\Helper\Api
+        - Db:
+              dsn: 'mysql:host=mysql;dbname=quick_daily_db'
+              user: 'test'
+              password: 'test'
+              populate: true # load dump before all tests
+              cleanup: false # load dump for each test

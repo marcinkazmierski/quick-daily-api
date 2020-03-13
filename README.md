@@ -14,6 +14,14 @@
 - `php bin/console cache:pool:clear cache.app` - czyszczenie cache dla cache.app pool
 - `php bin/console code:generator:usecase MyUseCase` - generowanie nowego use case w strukturze Domain/Infrastructure
 
+## Testy (komendy)
+- `vendor/bin/phpunit` - uruchomienie unit testów
+- `vendor/bin/phpunit --coverage-html var/cache/coverage` - generuje raport pokrycia kodu testami
+- `vendor/bin/codecept run` - uruchomienie testów codeception: integracyjne/akceptacyjne 
+- `vendor/bin/codecept g:cest api User` - dodanie nowego pustego testu akceptacyjnego o nazwie UserCest
+
+## Tłumaczenia
+- `php bin/console translation:update --output-format=yaml --force pl`
 
 ## TODO:
 - REST API,
