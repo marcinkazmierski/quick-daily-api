@@ -72,6 +72,12 @@ class User implements UserInterface
     private $teams;
 
     /**
+     * @var string
+     * @ORM\Column(type="string", options={"default": ""})
+     */
+    private $externalCallId;
+
+    /**
      * User constructor.
      * @throws \Exception
      */
@@ -231,5 +237,21 @@ class User implements UserInterface
     public function addTeam(Team $team): void
     {
         $this->teams->add($team);
+    }
+
+    /**
+     * @return string
+     */
+    public function getExternalCallId(): string
+    {
+        return $this->externalCallId;
+    }
+
+    /**
+     * @param string $externalCallId
+     */
+    public function setExternalCallId(string $externalCallId): void
+    {
+        $this->externalCallId = $externalCallId;
     }
 }

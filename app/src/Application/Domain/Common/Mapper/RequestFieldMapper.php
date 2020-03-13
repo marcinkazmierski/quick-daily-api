@@ -8,4 +8,6 @@ abstract class RequestFieldMapper
     const PASSWORD = 'password';
     const AUTH_TOKEN = 'X-AUTH-TOKEN';
     const USER_EMAIL = 'email';
+    const CALL_ID = 'callId';
+    const TEAM_ID = 'teamId';
 }
