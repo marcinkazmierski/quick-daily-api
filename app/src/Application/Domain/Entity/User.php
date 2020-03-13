@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Application\Domain\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -61,12 +63,22 @@ class User implements UserInterface
     private $createdAt;
 
     /**
+     * Many Teams have Many Users.
+     * @var Collection
+     *
+     * @ORM\ManyToMany(targetEntity="Team", inversedBy="users")
+     * @ORM\JoinTable(name="users_teams")
+     */
+    private $teams;
+
+    /**
      * User constructor.
      * @throws \Exception
      */
     public function __construct()
     {
         $this->createdAt = new \DateTime();
+        $this->teams = new ArrayCollection();
     }
 
     /**
@@ -197,5 +209,27 @@ class User implements UserInterface
         return $this->createdAt;
     }
 
+    /**
+     * @return Collection
+     */
+    public function getTeams(): Collection
+    {
+        return $this->teams;
+    }
 
+    /**
+     * @param Collection $teams
+     */
+    public function setTeams(Collection $teams): void
+    {
+        $this->teams = $teams;
+    }
+
+    /**
+     * @param Team $team
+     */
+    public function addTeam(Team $team): void
+    {
+        $this->teams->add($team);
+    }
 }

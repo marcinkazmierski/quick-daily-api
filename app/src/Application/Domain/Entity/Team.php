@@ -45,11 +45,8 @@ class Team
     /**
      * Many Teams have Many Users.
      * @var Collection
-     * @ORM\ManyToMany(targetEntity="User")
-     * @ORM\JoinTable(name="teams_users",
-     *      joinColumns={@ORM\JoinColumn(name="team_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")}
-     *      )
+     *
+     * @ORM\ManyToMany(targetEntity="User", mappedBy="teams")
      */
     private $users;
 
@@ -59,4 +56,14 @@ class Team
      * @ORM\JoinColumn(name="company_id", referencedColumnName="id")
      */
     private $company;
+
+    /**
+     * Team constructor.
+     */
+    public function __construct()
+    {
+        $this->users = new ArrayCollection();
+    }
+
+
 }
