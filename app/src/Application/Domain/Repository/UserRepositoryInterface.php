@@ -30,4 +30,18 @@ interface UserRepositoryInterface
      * @throws EntityNotFoundException
      */
     public function getUserByEmailAndPassword(string $email, string $password): User;
+
+    /**
+     * @param int $id
+     * @return User
+     * @throws EntityNotFoundException
+     */
+    public function getUserById(int $id): User;
+
+    /**
+     * @param string $externalId
+     * @return User
+     * @throws EntityNotFoundException
+     */
+    public function getUserByExternalId(string $externalId): User;
 }

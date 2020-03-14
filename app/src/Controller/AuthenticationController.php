@@ -43,7 +43,7 @@ class AuthenticationController extends AbstractController
      *      @OA\JsonContent(
      *          type = "object",
      *          @OA\Property(property="token", ref="#/components/schemas/token"),
-     *          @OA\Property(property="userId", ref="#/components/schemas/id")
+     *          @OA\Property(property="id", ref="#/components/schemas/id")
      *      )
      *     ),
      *     @OA\Response(response="400", ref="#/components/responses/badRequest"),

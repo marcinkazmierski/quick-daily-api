@@ -6,6 +6,7 @@ namespace App\Application\Infrastructure\Common\Factory\ErrorResponseFactory;
 use App\Application\Domain\Common\Factory\ErrorResponseFactory\ErrorResponseFromExceptionFactoryInterface;
 use App\Application\Domain\Common\Mapper\ErrorCodeMapper;
 use App\Application\Domain\Common\Response\ErrorResponse;
+use App\Application\Domain\Exception\EntityNotFoundException;
 use App\Application\Domain\Exception\InvalidCredentialsException;
 use App\Application\Domain\Exception\InvalidUserStatusException;
 use App\Application\Domain\Exception\ValidateException;
@@ -53,6 +54,10 @@ class ErrorResponseFromExceptionFactory implements ErrorResponseFromExceptionFac
             case InvalidUserStatusException::class:
                 $userMessage = 'Invalid user status';
                 $errorCode = ErrorCodeMapper::ERROR_INVALID_USER_STATUS;
+                break;
+            case EntityNotFoundException::class:
+                $userMessage = 'Entity not found';
+                $errorCode = ErrorCodeMapper::ERROR_ENTITY_NOT_FOUND;
                 break;
             default:
                 $userMessage = 'General error';

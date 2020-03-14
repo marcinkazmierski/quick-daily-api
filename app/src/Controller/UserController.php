@@ -5,6 +5,9 @@ namespace App\Controller;
 
 use App\Application\Domain\Common\Mapper\RequestFieldMapper;
 use App\Application\Domain\Entity\User;
+use App\Application\Domain\UseCase\GetUser\GetUser;
+use App\Application\Domain\UseCase\GetUser\GetUserPresenterInterface;
+use App\Application\Domain\UseCase\GetUser\GetUserRequest;
 use App\Application\Domain\UseCase\UserCall\UserCall;
 use App\Application\Domain\UseCase\UserCall\UserCallPresenterInterface;
 use App\Application\Domain\UseCase\UserCall\UserCallRequest;
@@ -70,6 +73,60 @@ class UserController extends AbstractController
         $teamId = (int)($content[RequestFieldMapper::TEAM_ID] ?? 0);
 
         $input = new UserCallRequest($currentUser, $callId, $teamId);
+        $usecase->execute($input, $presenter);
+        return $presenter->view();
+    }
+
+
+    /**
+     * @Route(
+     *     "/current",
+     *     methods={"GET"},
+     *     name="get-current-user"
+     * )
+     * @param Request $request
+     * @param GetUser $usecase
+     * @param GetUserPresenterInterface $presenter
+     * @return JsonResponse
+     */
+    public function getCurrentUser(
+        Request $request,
+        GetUser $usecase,
+        GetUserPresenterInterface $presenter
+    ): JsonResponse
+    {
+        /** @var User $currentUser */
+        $currentUser = $this->getUser();
+
+        $input = new GetUserRequest($currentUser, '');
+        $usecase->execute($input, $presenter);
+        return $presenter->view();
+    }
+
+    /**
+     * @Route(
+     *     "/{callId}",
+     *     methods={"GET"},
+     *     name="get-user-by-callid"
+     * )
+     * @param Request $request
+     * @param string $callId
+     * @param GetUser $usecase
+     * @param GetUserPresenterInterface $presenter
+     * @return JsonResponse
+     */
+    public function getUserByCallId(
+        Request $request,
+        string $callId,
+        GetUser $usecase,
+        GetUserPresenterInterface $presenter
+    ): JsonResponse
+    {
+        /** @var User $currentUser */
+        $currentUser = $this->getUser();
+        $content = json_decode($request->getContent(), true);
+
+        $input = new GetUserRequest($currentUser, $callId);
         $usecase->execute($input, $presenter);
         return $presenter->view();
     }

@@ -91,4 +91,34 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         }
         return $user;
     }
+
+    /**
+     * @param int $id
+     * @return User
+     * @throws EntityNotFoundException
+     */
+    public function getUserById(int $id): User
+    {
+        /** @var User $user */
+        $user = $this->find($id);
+        if (!$user) {
+            throw new EntityNotFoundException("Invalid id - user not exist");
+        }
+        return $user;
+    }
+
+    /**
+     * @param string $externalId
+     * @return User
+     * @throws EntityNotFoundException
+     */
+    public function getUserByExternalId(string $externalId): User
+    {
+        /** @var User $user */
+        $user = $this->findOneBy(['externalCallId' => $externalId]);
+        if (!$user) {
+            throw new EntityNotFoundException("Invalid externalCallId");
+        }
+        return $user;
+    }
 }

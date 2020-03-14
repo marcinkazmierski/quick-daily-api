@@ -1,17 +1,17 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Application\Domain\UseCase\UserCall;
+namespace App\Application\Domain\UseCase\GetUser;
 
 use App\Application\Domain\Common\Factory\ErrorResponseFactory\ErrorResponseFromExceptionFactoryInterface;
 use App\Application\Domain\Exception\ValidateException;
 use App\Application\Domain\Repository\UserRepositoryInterface;
 
 /**
- * Class UserCall
- * @package App\Application\Domain\UseCase\UserCall
+ * Class GetUser
+ * @package App\Application\Domain\UseCase\GetUser
  */
-class UserCall
+class GetUser
 {
     /** @var ErrorResponseFromExceptionFactoryInterface $errorResponseFromExceptionFactory */
     private $errorResponseFromExceptionFactory;
@@ -20,7 +20,7 @@ class UserCall
     private $userRepository;
 
     /**
-     * UserCall constructor.
+     * GetUser constructor.
      * @param ErrorResponseFromExceptionFactoryInterface $errorResponseFromExceptionFactory
      * @param UserRepositoryInterface $userRepository
      */
@@ -31,21 +31,21 @@ class UserCall
     }
 
     /**
-     * @param UserCallRequest $request
-     * @param UserCallPresenterInterface $presenter
+     * @param GetUserRequest $request
+     * @param GetUserPresenterInterface $presenter
      */
     public function execute(
-        UserCallRequest $request,
-        UserCallPresenterInterface $presenter)
+        GetUserRequest $request,
+        GetUserPresenterInterface $presenter)
     {
-        $response = new UserCallResponse();
+        $response = new GetUserResponse();
         try {
-            if (empty($request->getCallId())) {
-                throw new ValidateException("Empty callId!");
+            if (!empty($request->getCallId())) {
+                $user = $this->userRepository->getUserByExternalId($request->getCallId());
+                $response->setUser($user);
+            } else {
+                $response->setUser($request->getUser());
             }
-            $user = $this->userRepository->getUserById($request->getUser()->getId());
-            $user->setExternalCallId($request->getCallId());
-            $this->userRepository->save($user);
         } catch (\Throwable $e) {
             $error = $this->errorResponseFromExceptionFactory->create($e);
             $response->setError($error);

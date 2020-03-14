@@ -75,7 +75,7 @@ class User implements UserInterface
      * @var string
      * @ORM\Column(type="string", options={"default": ""})
      */
-    private $externalCallId;
+    private $externalCallId = '';
 
     /**
      * User constructor.
