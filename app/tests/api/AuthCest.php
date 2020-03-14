@@ -67,12 +67,12 @@ class AuthCest
         $I->seeResponseCodeIs(\Codeception\Util\HttpCode::OK);
         $I->seeResponseIsJson();
         $I->seeResponseJsonMatchesJsonPath('$.token');
-        $I->seeResponseJsonMatchesJsonPath('$.userId');
+        $I->seeResponseJsonMatchesJsonPath('$.id');
 
         $response = json_decode($I->grabResponse());
         \PHPUnit\Framework\Assert::assertEquals(
             $userId,
-            $response->userId,
+            $response->id,
             "Invalid userId"
         );
 
