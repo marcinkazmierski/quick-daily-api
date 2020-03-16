@@ -24,6 +24,7 @@
 - `php bin/console translation:update --output-format=yaml --force pl`
 
 ## TODO:
-- REST API,
-- unit tests
-- codeception tests
+- register
+- admin panel
+- unit test
+- github CI

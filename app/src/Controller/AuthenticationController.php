@@ -75,4 +75,8 @@ class AuthenticationController extends AbstractController
         $authentication->execute($authenticationRequest, $presenter);
         return $presenter->view();
     }
+
+    public function register(){
+        //todo
+    }
 }
