@@ -6,6 +6,7 @@ namespace App\Application\Domain\Common\Mapper;
 abstract class ResponseFieldMapper
 {
     const TEAM_SECTION = 'teams';
+    const USERS_SECTION = 'users';
 
     const AUTH_TOKEN = 'token';
     const ID = 'id';

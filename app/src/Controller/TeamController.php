@@ -7,6 +7,9 @@ use App\Application\Domain\Entity\User;
 use App\Application\Domain\UseCase\GetTeams\GetTeams;
 use App\Application\Domain\UseCase\GetTeams\GetTeamsPresenterInterface;
 use App\Application\Domain\UseCase\GetTeams\GetTeamsRequest;
+use App\Application\Domain\UseCase\GetTeamUsers\GetTeamUsers;
+use App\Application\Domain\UseCase\GetTeamUsers\GetTeamUsersPresenterInterface;
+use App\Application\Domain\UseCase\GetTeamUsers\GetTeamUsersRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -63,6 +66,50 @@ class TeamController extends AbstractController
         $content = json_decode($request->getContent(), true);
 
         $input = new GetTeamsRequest($currentUser);
+        $usecase->execute($input, $presenter);
+        return $presenter->view();
+    }
+
+    /**
+     *
+     * @OA\Get(
+     *     path="/api/v1/teams/{id}/users",
+     *     description="Get user teams",
+     *     tags = {"Team"},
+     *     @OA\Parameter(ref="#/components/parameters/X-AUTH-TOKEN"),
+     *     @OA\Response(
+     *      response="200",
+     *      description="Array of teams",
+     *      @OA\JsonContent(
+     *              type="object",
+     *              @OA\Property(property="teams", type="array", @OA\Items(ref="#/components/schemas/Team")),
+     *      ),
+     *     ),
+     *     @OA\Response(response="400", ref="#/components/responses/invalidToken"),
+     *     @OA\Response(response="500", ref="#/components/responses/generalError"),
+     * ),
+     *
+     * @Route(
+     *     "/{id}/users",
+     *     methods={"GET"},
+     *     name="get-team-users"
+     * )
+     *
+     * @param int $id
+     * @param GetTeamUsers $usecase
+     * @param GetTeamUsersPresenterInterface $presenter
+     * @return JsonResponse
+     */
+    public function getUsersByTeam(
+        int $id,
+        GetTeamUsers $usecase,
+        GetTeamUsersPresenterInterface $presenter
+    ): JsonResponse
+    {
+        /** @var User $currentUser */
+        $currentUser = $this->getUser();
+
+        $input = new GetTeamUsersRequest($id, $currentUser);
         $usecase->execute($input, $presenter);
         return $presenter->view();
     }
