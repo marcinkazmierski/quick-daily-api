@@ -7,6 +7,9 @@ use App\Application\Domain\Common\Mapper\RequestFieldMapper;
 use App\Application\Domain\UseCase\GenerateAuthenticationToken\GenerateAuthenticationToken;
 use App\Application\Domain\UseCase\GenerateAuthenticationToken\GenerateAuthenticationTokenPresenterInterface;
 use App\Application\Domain\UseCase\GenerateAuthenticationToken\GenerateAuthenticationTokenRequest;
+use App\Application\Domain\UseCase\RegisterUser\RegisterUser;
+use App\Application\Domain\UseCase\RegisterUser\RegisterUserPresenterInterface;
+use App\Application\Domain\UseCase\RegisterUser\RegisterUserRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -76,7 +79,26 @@ class AuthenticationController extends AbstractController
         return $presenter->view();
     }
 
-    public function register(){
-        //todo
+    /**
+     * @Route(
+     *     "/register",
+     *     methods={"POST"},
+     *     name="register-new-user"
+     * )
+     *
+     * @param Request $request
+     * @param RegisterUser $useCase
+     * @param RegisterUserPresenterInterface $presenter
+     * @return JsonResponse
+     */
+    public function register(
+        Request $request,
+        RegisterUser $useCase,
+        RegisterUserPresenterInterface $presenter
+    )
+    {
+        $input = new RegisterUserRequest();
+        $useCase->execute($input, $presenter);
+        return $presenter->view();
     }
 }
