@@ -72,7 +72,7 @@ class AuthenticationController extends AbstractController
     {
         $content = json_decode($request->getContent(), true);
         $email = (string)($content[RequestFieldMapper::USER_EMAIL] ?? '');
-        $password = (string)($content[RequestFieldMapper::PASSWORD] ?? '');
+        $password = (string)($content[RequestFieldMapper::USER_PASSWORD] ?? '');
 
         $authenticationRequest = new GenerateAuthenticationTokenRequest($email, $password);
         $authentication->execute($authenticationRequest, $presenter);
@@ -80,6 +80,26 @@ class AuthenticationController extends AbstractController
     }
 
     /**
+     * Register user.
+     *
+     * @OA\Post(
+     *     path="/api/v1/auth/register",
+     *     description="Register user.",
+     *     tags = {"Register"},
+     *     @OA\RequestBody(
+     *      required=true,
+     *      @OA\JsonContent(
+     *          type = "object",
+     *          @OA\Property(property="email", ref="#/components/schemas/email"),
+     *          @OA\Property(property="password", ref="#/components/schemas/password"),
+     *          @OA\Property(property="nick", ref="#/components/schemas/text"),
+     *      ),
+     *     ),
+     *     @OA\Response(response="204", ref="#/components/responses/noContent"),
+     *     @OA\Response(response="400", ref="#/components/responses/badRequest"),
+     *     @OA\Response(response="500", ref="#/components/responses/generalError"),
+     * ),
+     *
      * @Route(
      *     "/register",
      *     methods={"POST"},
@@ -97,8 +117,12 @@ class AuthenticationController extends AbstractController
         RegisterUserPresenterInterface $presenter
     )
     {
-        // todo:
-        $input = new RegisterUserRequest();
+        $content = json_decode($request->getContent(), true);
+        $email = (string)($content[RequestFieldMapper::USER_EMAIL] ?? '');
+        $password = (string)($content[RequestFieldMapper::USER_PASSWORD] ?? '');
+        $nick = (string)($content[RequestFieldMapper::USER_NICK] ?? '');
+
+        $input = new RegisterUserRequest($email, $password, $nick);
         $useCase->execute($input, $presenter);
         return $presenter->view();
     }
