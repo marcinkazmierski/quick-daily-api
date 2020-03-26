@@ -97,6 +97,7 @@ class AuthenticationController extends AbstractController
         RegisterUserPresenterInterface $presenter
     )
     {
+        // todo:
         $input = new RegisterUserRequest();
         $useCase->execute($input, $presenter);
         return $presenter->view();
