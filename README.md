@@ -29,7 +29,7 @@
 - unit test
 - github CI
 - GetTeamUsers tests api
-- CQRS commands
+- CQRS commands, https://devenv.pl/cqrs-command/
 - MongoBD: https://symfony.com/doc/master/bundles/DoctrineMongoDBBundle/index.html
 
 
