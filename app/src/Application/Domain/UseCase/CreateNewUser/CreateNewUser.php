@@ -6,7 +6,6 @@ namespace App\Application\Domain\UseCase\CreateNewUser;
 use App\Application\Domain\Command\Bus\CommandBusInterface;
 use App\Application\Domain\Command\CreateNewUserAccountCommand;
 use App\Application\Domain\Common\Factory\ErrorResponseFactory\ErrorResponseFromExceptionFactoryInterface;
-use App\Application\Domain\Entity\User;
 use App\Application\Domain\Repository\UserRepositoryInterface;
 use App\Application\Domain\ValueObject\EmailValueObject;
 use App\Application\Domain\ValueObject\NameValueObject;

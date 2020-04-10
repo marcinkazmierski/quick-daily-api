@@ -31,3 +31,21 @@ services:
     app.command_handler.create_new_user_account:
         class: App\Application\Domain\Command\Handler\CreateNewUserAccountCommandHandler
         public: true
+
+    # Presenters:
+    app.presenter.create_new_user_api:
+        class: App\Application\Infrastructure\UseCase\CreateNewUser\CreateNewUserApiPresenter
+        public: true
+
+    app.presenter.create_new_user_cli:
+        class: App\Application\Infrastructure\UseCase\CreateNewUser\CreateNewUserPresenter
+        public: true
+
+    # Default presents implementations:
+    App\Application\Domain\UseCase\CreateNewUser\CreateNewUserPresenterInterface: '@app.presenter.create_new_user_api'
+
+    # Custom DI
+    App\Command\CreateNewUserCommand:
+        public: true
+        bind:
+            App\Application\Domain\UseCase\CreateNewUser\CreateNewUserPresenterInterface: '@app.presenter.create_new_user_cli'
