@@ -9,6 +9,7 @@ interface CommandBusInterface
 {
     /**
      * @param CommandInterface $command
+     * @throws \App\Application\Domain\Exception\CommandHandlerNotFoundException
      */
     public function handle(CommandInterface $command): void;
 }

@@ -3,24 +3,28 @@ declare(strict_types=1);
 
 namespace App\Application\Domain\Command;
 
+use App\Application\Domain\ValueObject\EmailValueObject;
+use App\Application\Domain\ValueObject\NameValueObject;
+use App\Application\Domain\ValueObject\PasswordValueObject;
+
 class CreateNewUserAccountCommand implements CommandInterface
 {
-    /** @var string $email */
+    /** @var EmailValueObject $email */
     private $email;
 
-    /** @var string $password */
+    /** @var PasswordValueObject $password */
     private $password;
 
-    /** @var string */
+    /** @var NameValueObject */
     private $nick;
 
     /**
      * CreateNewUserAccountCommand constructor.
-     * @param string $email
-     * @param string $password
-     * @param string $nick
+     * @param EmailValueObject $email
+     * @param PasswordValueObject $password
+     * @param NameValueObject $nick
      */
-    public function __construct(string $email, string $password, string $nick)
+    public function __construct(EmailValueObject $email, PasswordValueObject $password, NameValueObject $nick)
     {
         $this->email = $email;
         $this->password = $password;
@@ -28,25 +32,25 @@ class CreateNewUserAccountCommand implements CommandInterface
     }
 
     /**
-     * @return string
+     * @return EmailValueObject
      */
-    public function getEmail(): string
+    public function getEmail(): EmailValueObject
     {
         return $this->email;
     }
 
     /**
-     * @return string
+     * @return PasswordValueObject
      */
-    public function getPassword(): string
+    public function getPassword(): PasswordValueObject
     {
         return $this->password;
     }
 
     /**
-     * @return string
+     * @return NameValueObject
      */
-    public function getNick(): string
+    public function getNick(): NameValueObject
     {
         return $this->nick;
     }

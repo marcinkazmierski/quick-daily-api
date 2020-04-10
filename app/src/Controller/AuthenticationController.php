@@ -4,12 +4,12 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Application\Domain\Common\Mapper\RequestFieldMapper;
+use App\Application\Domain\UseCase\CreateNewUser\CreateNewUser;
+use App\Application\Domain\UseCase\CreateNewUser\CreateNewUserPresenterInterface;
+use App\Application\Domain\UseCase\CreateNewUser\CreateNewUserRequest;
 use App\Application\Domain\UseCase\GenerateAuthenticationToken\GenerateAuthenticationToken;
 use App\Application\Domain\UseCase\GenerateAuthenticationToken\GenerateAuthenticationTokenPresenterInterface;
 use App\Application\Domain\UseCase\GenerateAuthenticationToken\GenerateAuthenticationTokenRequest;
-use App\Application\Domain\UseCase\RegisterUser\RegisterUser;
-use App\Application\Domain\UseCase\RegisterUser\RegisterUserPresenterInterface;
-use App\Application\Domain\UseCase\RegisterUser\RegisterUserRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -107,14 +107,14 @@ class AuthenticationController extends AbstractController
      * )
      *
      * @param Request $request
-     * @param RegisterUser $useCase
-     * @param RegisterUserPresenterInterface $presenter
+     * @param CreateNewUser $useCase
+     * @param CreateNewUserPresenterInterface $presenter
      * @return JsonResponse
      */
     public function register(
         Request $request,
-        RegisterUser $useCase,
-        RegisterUserPresenterInterface $presenter
+        CreateNewUser $useCase,
+        CreateNewUserPresenterInterface $presenter
     )
     {
         $content = json_decode($request->getContent(), true);
@@ -122,7 +122,7 @@ class AuthenticationController extends AbstractController
         $password = (string)($content[RequestFieldMapper::USER_PASSWORD] ?? '');
         $nick = (string)($content[RequestFieldMapper::USER_NICK] ?? '');
 
-        $input = new RegisterUserRequest($email, $password, $nick);
+        $input = new CreateNewUserRequest($email, $password, $nick);
         $useCase->execute($input, $presenter);
         return $presenter->view();
     }
