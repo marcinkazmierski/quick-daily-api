@@ -120,6 +120,23 @@
     "doctrine/migrations": {
         "version": "2.2.1"
     },
+    "doctrine/mongodb-odm": {
+        "version": "2.0.5"
+    },
+    "doctrine/mongodb-odm-bundle": {
+        "version": "3.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "3.3",
+            "ref": "1fd8598bf42227a1c8905edd32f640e4c5d15eff"
+        },
+        "files": [
+            "config/packages/doctrine_mongodb.yaml",
+            "config/packages/prod/doctrine_mongodb.yaml",
+            "src/Document/.gitignore"
+        ]
+    },
     "doctrine/orm": {
         "version": "v2.7.1"
     },
@@ -146,6 +163,9 @@
     },
     "justinrainbow/json-schema": {
         "version": "5.2.9"
+    },
+    "mongodb/mongodb": {
+        "version": "1.6.0"
     },
     "monolog/monolog": {
         "version": "2.0.2"
@@ -384,6 +404,9 @@
             "config/packages/prod/monolog.yaml",
             "config/packages/test/monolog.yaml"
         ]
+    },
+    "symfony/options-resolver": {
+        "version": "v5.0.7"
     },
     "symfony/orm-pack": {
         "version": "v1.0.8"
