@@ -82,6 +82,22 @@ class UserController extends AbstractController
 
 
     /**
+     * Get current user.
+     *
+     * @OA\Post(
+     *     path="/api/v1/users/current",
+     *     description="Get current user.",
+     *     tags = {"User"},
+     *     @OA\Parameter(ref="#/components/parameters/X-AUTH-TOKEN"),
+     *     @OA\RequestBody(),
+     *     @OA\Response(
+     *      response="200",
+     *      description="Todo",
+     *     ),
+     *     @OA\Response(response="400", ref="#/components/responses/invalidToken"),
+     *     @OA\Response(response="500", ref="#/components/responses/generalError"),
+     * ),
+     *
      * @Route(
      *     "/current",
      *     methods={"GET"},
@@ -107,6 +123,28 @@ class UserController extends AbstractController
     }
 
     /**
+     * Get user by callId.
+     *
+     * @OA\Get(
+     *     path="/api/v1/users/{callId}",
+     *     description="Get user by callId.",
+     *     tags = {"Call", "User"},
+     *     @OA\Parameter(ref="#/components/parameters/X-AUTH-TOKEN"),
+     *     @OA\RequestBody(
+     *      required=true,
+     *      @OA\JsonContent(
+     *          type = "object",
+     *          @OA\Property(property="callId", ref="#/components/schemas/text")
+     *      ),
+     *     ),
+     *     @OA\Response(
+     *      response="200",
+     *      description="Todo",
+     *     ),
+     *     @OA\Response(response="400", ref="#/components/responses/invalidToken"),
+     *     @OA\Response(response="500", ref="#/components/responses/generalError"),
+     * ),
+     *
      * @Route(
      *     "/{callId}",
      *     methods={"GET"},
@@ -135,10 +173,10 @@ class UserController extends AbstractController
     }
 
     /**
-     * Left user call in team.
+     * Left user call.
      *
-     * @OA\Post(
-     *     path="/api/v1/users/call/left",
+     * @OA\Delete(
+     *     path="/api/v1/users/{callId}",
      *     description="Left user call",
      *     tags = {"Call"},
      *     @OA\Parameter(ref="#/components/parameters/X-AUTH-TOKEN"),
@@ -159,8 +197,8 @@ class UserController extends AbstractController
      * ),
      *
      * @Route(
-     *     "/call/left",
-     *     methods={"POST"},
+     *     "/{callId}",
+     *     methods={"DELETE"},
      *     name="left-user-call"
      * )
      * @param Request $request
@@ -179,9 +217,8 @@ class UserController extends AbstractController
         $content = json_decode($request->getContent(), true);
 
         $callId = (string)($content[RequestFieldMapper::CALL_ID] ?? '');
-        $teamId = (int)($content[RequestFieldMapper::TEAM_ID] ?? 0);
 
-        $input = new LeftUserCallRequest($currentUser, $callId, $teamId);
+        $input = new LeftUserCallRequest($currentUser, $callId);
         $usecase->execute($input, $presenter);
         return $presenter->view();
     }
