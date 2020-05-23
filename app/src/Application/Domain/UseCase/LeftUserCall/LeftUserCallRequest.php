@@ -17,20 +17,15 @@ class LeftUserCallRequest
     /** @var string */
     private $callId;
 
-    /** @var int */
-    private $teamId;
-
     /**
-     * UserCallRequest constructor.
+     * LeftUserCallRequest constructor.
      * @param User $user
      * @param string $callId
-     * @param int $teamId
      */
-    public function __construct(User $user, string $callId, int $teamId)
+    public function __construct(User $user, string $callId)
     {
         $this->user = $user;
         $this->callId = $callId;
-        $this->teamId = $teamId;
     }
 
     /**
@@ -47,13 +42,5 @@ class LeftUserCallRequest
     public function getCallId(): string
     {
         return $this->callId;
-    }
-
-    /**
-     * @return int
-     */
-    public function getTeamId(): int
-    {
-        return $this->teamId;
     }
 }
