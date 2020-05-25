@@ -44,10 +44,7 @@ class UserController extends AbstractController
      *          @OA\Property(property="teamId", ref="#/components/schemas/id"),
      *      ),
      *     ),
-     *     @OA\Response(
-     *      response="200",
-     *      description="Todo",
-     *     ),
+     *     @OA\Response(response="204", ref="#/components/responses/noContent"),
      *     @OA\Response(response="400", ref="#/components/responses/invalidToken"),
      *     @OA\Response(response="500", ref="#/components/responses/generalError"),
      * ),
